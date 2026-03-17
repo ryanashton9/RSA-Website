@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RSA Brick & Construction</title>
+  <style>
+    body { margin:0; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background:#f6f6f6; color:#222; line-height:1.6; }
+    .container { max-width: 1120px; margin:0 auto; padding:0 1.5rem; }
+    header { position:sticky; top:0; background:#f6f6f6; border-bottom:1px solid rgba(0,0,0,0.05); }
+    .header-inner{ display:flex; justify-content:space-between; align-items:center; padding:0.8rem 0; }
+    .logo{ display:flex; align-items:center; gap:0.85rem; font-weight:600; }
+    .logo-image{ height:42px; width:auto; border-radius:8px; overflow:hidden; background:#fff; padding:4px 10px; box-shadow:0 4px 10px rgba(0,0,0,0.08); }
+    .logo-image img{ height:34px; width:auto; display:block; object-fit:contain; }
+    .logo-text{ display:flex; flex-direction:column; gap:0.1rem; }
+    .logo-title{ font-size:1.05rem; letter-spacing:0.06em; text-transform:uppercase; }
+    .logo-tagline{ font-size:0.8rem; letter-spacing:0.12em; text-transform:uppercase; color:#c44536; }
+    nav a{ margin-left:1rem; font-size:0.9rem; color:#666; text-decoration:none; }
+    nav a:hover{ color:#222; }
+    .btn{ padding:0.5rem 1.2rem; border-radius:999px; background:#c44536; color:#fff; text-decoration:none; font-size:0.9rem; }
+    .hero{ padding:3.5rem 0 3rem; }
+    .hero-inner{ display:grid; grid-template-columns:minmax(0,1.2fr) minmax(0,1fr); gap:3rem; align-items:center; }
+    .hero h1{ font-size:2.3rem; margin:0 0 1rem; }
+    .hero p{ color:#666; max-width:520px; margin:0 0 1.4rem; }
+    .hero-actions{ display:flex; flex-wrap:wrap; gap:0.8rem; margin-bottom:1.5rem; }
+    .hero-card{ background:#fff; border-radius:18px; padding:1.6rem 1.4rem; box-shadow:0 10px 25px rgba(0,0,0,0.06); border:1px solid rgba(0,0,0,0.04); max-width:320px; }
+    .hero-card p{ color:#666; font-size:0.9rem; }
+    .hero-card ul{ margin:0.6rem 0 0; padding-left:1.1rem; font-size:0.9rem; color:#444; }
+    .section{ padding:3.2rem 0; }
+    .section-alt{ background:#fff; }
+    .section-title{ text-align:center; font-size:2rem; margin:0 0 0.5rem; }
+    .section-intro{ text-align:center; color:#666; max-width:560px; margin:0 auto 2rem; }
+    .split{ display:grid; grid-template-columns:1.1fr 1fr; gap:2.2rem; align-items:start; }
+    .about-highlights{ display:grid; gap:1rem; }
+    .highlight-card{ background:#fff; border-radius:12px; padding:1.1rem 1rem; border:1px solid #e2e2e2; font-size:0.9rem; color:#555; }
+    .grid{ display:grid; gap:1.6rem; }
+    .services-grid{ grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); }
+    .card{ background:#fff; border-radius:14px; padding:1.5rem 1.4rem; box-shadow:0 10px 25px rgba(0,0,0,0.05); border:1px solid rgba(0,0,0,0.03); }
+    .card p{ color:#666; font-size:0.92rem; margin:0.4rem 0 0; }
+    .project-grid{ grid-template-columns:repeat(auto-fit, minmax(260px,1fr)); }
+    .project-card{ background:#fff; border-radius:14px; overflow:hidden; border:1px solid rgba(0,0,0,0.03); box-shadow:0 10px 25px rgba(0,0,0,0.05); }
+    .project-image{ height:190px; background-image:linear-gradient(135deg,#dcd3d1,#b39c92); background-size:cover; background-position:center; }
+    .project-image-1{ background-image:url("gallery-1.png"); }
+    .project-image-2{ background-image:url("gallery-2.png"); }
+    .project-image-3{ background-image:url("gallery-3.png"); }
+    .project-image-4{ background-image:url("gallery-4.png"); }
+    .project-body{ padding:1.1rem 1.3rem 1.3rem; }
+    .testimonial-grid{ grid-template-columns:repeat(auto-fit, minmax(260px,1fr)); }
+    .testimonial-card{ position:relative; }
+    .testimonial-card::before{ content:"“"; position:absolute; left:0.7rem; top:0.3rem; font-size:3rem; color:rgba(196,69,54,0.18); }
+    .quote{ margin:0 0 0.9rem; font-size:0.95rem; }
+    .author{ margin:0; font-size:0.9rem; color:#666; font-weight:600; }
+    .social-links{ display:flex; flex-wrap:wrap; justify-content:center; gap:1rem; margin-top:1.5rem; }
+    .social-badge{ display:inline-flex; align-items:center; gap:0.45rem; padding:0.55rem 1rem; border-radius:999px; border:1px solid #ddd; background:#fff; font-size:0.9rem; text-decoration:none; color:#222; box-shadow:0 6px 14px rgba(0,0,0,0.04); }
+    .social-badge span{ font-weight:600; }
+    .fb-wrapper{max-width:520px;margin:2rem auto 0;}
+    .contact-details{ list-style:none; padding:0; margin:1.3rem 0 0; font-size:0.95rem; color:#555; }
+    .contact-details li+li{ margin-top:0.35rem; }
+    .contact-details a{ color:#c44536; text-decoration:none; }
+    .contact-details a:hover{ text-decoration:underline; }
+    .contact-form{ background:#fff; border-radius:14px; padding:1.7rem 1.5rem; box-shadow:0 10px 25px rgba(0,0,0,0.05); border:1px solid rgba(0,0,0,0.03); }
+    .form-row{ margin-bottom:0.9rem; }
+    .form-row label{ display:block; font-size:0.82rem; font-weight:500; margin-bottom:0.25rem; }
+    .form-row input, .form-row select, .form-row textarea{ width:100%; padding:0.6rem 0.7rem; border-radius:9px; border:1px solid #ddd; font-family:inherit; font-size:0.9rem; }
+    .form-note{ margin-top:0.6rem; font-size:0.8rem; color:#777; }
+    footer{ border-top:1px solid rgba(0,0,0,0.06); padding:1.5rem 0 2rem; background:#fff; font-size:0.85rem; color:#777; }
+    .footer-inner{ display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; }
+    @media (max-width:900px){ .hero-inner, .split{ grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container header-inner">
+      <div class="logo">
+        <div class="logo-image">
+          <img src="logo.png" alt="RSA Brickwork &amp; Construction logo" />
+        </div>
+        <div class="logo-text">
+          <span class="logo-title">RSA BRICKWORK &amp; CONSTRUCTION</span>
+          <span class="logo-tagline">Your project is our business</span>
+        </div>
+      </div>
+      <nav>
+        <a href="#about">About</a>
+        <a href="#services">Services</a>
+        <a href="#projects">Projects</a>
+        <a href="gallery.html">Gallery</a>
+        <a href="#testimonials">Testimonials</a>
+        <a href="#contact" class="btn">Get a Quote</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container hero-inner">
+      <div>
+        <h1>Quality Brickwork &amp; Construction You Can Trust</h1>
+        <p>RSA Brick &amp; Construction delivers solid brickwork, clean finishes and reliable project management for homes and small developments.</p>
+        <div class="hero-actions">
+          <a href="#contact" class="btn">Request a Free Quote</a>
+          <a href="#projects" style="padding:0.45rem 1.1rem; border-radius:999px; border:1px solid #ccc; text-decoration:none; font-size:0.9rem; color:#333; background:#fff;">View Our Work</a>
+        </div>
+        <p style="font-size:0.9rem; color:#666;">Years experience: 10+ &nbsp; • &nbsp; Projects completed: 150+ &nbsp; • &nbsp; Fully insured.</p>
+      </div>
+      <div class="hero-card">
+        <h3>Why choose RSA?</h3>
+        <p>Professional bricklayers and builders focused on strong structure, straight lines and tidy sites.</p>
+        <ul>
+          <li>Extensions, walls, repairs, and small builds</li>
+          <li>Clear quotes and realistic timelines</li>
+          <li>Friendly, reliable and insured team</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="about" class="section section-alt">
+    <div class="container split">
+      <div>
+        <h2>About RSA Brick &amp; Construction</h2>
+        <p>RSA Brick &amp; Construction is a local building company specialising in quality brickwork and domestic building projects. We take pride in neat, accurate work and good communication from start to finish.</p>
+        <p>Whether you’re adding space with an extension, improving your garden with new walls, or repairing tired brickwork, we make the process straightforward and stress free.</p>
+      </div>
+      <div class="about-highlights">
+        <div class="highlight-card">
+          <strong>Professional &amp; reliable</strong>
+          <p>We turn up when we say we will, keep you updated and leave the site tidy.</p>
+        </div>
+        <div class="highlight-card">
+          <strong>Quality workmanship</strong>
+          <p>Straight lines, proper levels and correctly matched brickwork on every job.</p>
+        </div>
+        <div class="highlight-card">
+          <strong>Fully insured</strong>
+          <p>Work carried out to current standards, with the right insurance in place.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="services" class="section">
+    <div class="container">
+      <h2 class="section-title">Services</h2>
+      <p class="section-intro">RSA Brickwork &amp; Construction carries out a full range of brickwork and building services across Manchester.</p>
+      <div class="grid services-grid">
+        <div class="card">
+          <h3>House Extensions</h3>
+          <p>Single and double storey extensions, kitchen knock‑throughs and structural alterations to add light and space to your home.</p>
+        </div>
+        <div class="card">
+          <h3>Walls &amp; Brickwork</h3>
+          <p>Garden walls, retaining walls, boundary walls and detailed brick features, always matched neatly to existing brickwork.</p>
+        </div>
+        <div class="card">
+          <h3>Steel Work &amp; Chimneys</h3>
+          <p>Installation of RSJs/steels for open‑plan spaces, chimney repairs and rebuilds, carried out safely and to specification.</p>
+        </div>
+        <div class="card">
+          <h3>Landscaping &amp; Hardstanding</h3>
+          <p>Patios, paths and other hard landscaping to finish your project off with clean lines and a smart, usable outdoor space.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="projects" class="section section-alt">
+    <div class="container">
+      <h2 class="section-title">Gallery – Recent Work</h2>
+      <p class="section-intro">A sample of recent extensions, brickwork and landscaping projects completed around Manchester.</p>
+      <div class="grid project-grid">
+        <div class="project-card">
+          <div class="project-image project-image-1"></div>
+          <div class="project-body">
+            <h3>House Extension</h3>
+            <p>Two‑storey brick extension tied in neatly to the existing property, adding valuable living space.</p>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="project-image project-image-2"></div>
+          <div class="project-body">
+            <h3>Walls &amp; Landscaping</h3>
+            <p>Garden walls and hard landscaping with clean lines and carefully laid paving.</p>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="project-image project-image-3"></div>
+          <div class="project-body">
+            <h3>Steel Work &amp; Openings</h3>
+            <p>Structural steel and brickwork forming large openings for modern glazed doors.</p>
+          </div>
+        </div>
+        <div class="project-card">
+          <div class="project-image project-image-4"></div>
+          <div class="project-body">
+            <h3>Chimneys &amp; Brick Details</h3>
+            <p>Carefully matched brickwork and chimney work on character properties.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="testimonials" class="section">
+    <div class="container">
+      <h2 class="section-title">What Clients Say</h2>
+      <div class="grid testimonial-grid">
+        <div class="card testimonial-card">
+          <p class="quote">“Really pleased with the work from RSA Brick &amp; Construction. Neat brickwork, friendly team and everything left clean and tidy.”</p>
+          <p class="author">– Homeowner</p>
+        </div>
+        <div class="card testimonial-card">
+          <p class="quote">“Turned up when they said they would, stuck to the agreed price and finished to a very good standard.”</p>
+          <p class="author">– Property Owner</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <h2 class="section-title">See More of Our Work</h2>
+      <p class="section-intro">For regular updates, site photos and finished projects, follow RSA Brickwork &amp; Construction on social media.</p>
+      <div class="social-links">
+        <a class="social-badge" href="https://www.instagram.com/rsabrickworks" target="_blank" rel="noopener noreferrer">
+          <span>Instagram</span>
+          <small>@rsabrickworks</small>
+        </a>
+        <a class="social-badge" href="https://www.facebook.com/profile.php?id=61563051543174" target="_blank" rel="noopener noreferrer">
+          <span>Facebook</span>
+          <small>RSA Brickworks &amp; Construction</small>
+        </a>
+      </div>
+      <div class="fb-wrapper">
+        <div id="fb-root"></div>
+        <div class="fb-page"
+             data-href="https://www.facebook.com/profile.php?id=61563051543174"
+             data-tabs="timeline"
+             data-width="500"
+             data-height=""
+             data-small-header="false"
+             data-adapt-container-width="true"
+             data-hide-cover="false"
+             data-show-facepile="false">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="section section-alt">
+    <div class="container split">
+      <div>
+        <h2>Request a Free Quote</h2>
+        <p>Tell us a bit about your project and we’ll get back to you with a no‑obligation quote.</p>
+        <ul class="contact-details">
+          <li><strong>Phone:</strong> <a href="tel:+447539782655">07539 782 655</a></li>
+          <li><strong>Email:</strong> <a href="mailto:rsabrickworkconstruction@gmail.com">rsabrickworkconstruction@gmail.com</a></li>
+          <li><strong>Area covered:</strong> Manchester and surrounding areas</li>
+        </ul>
+      </div>
+      <form class="contact-form">
+        <div class="form-row">
+          <label>Name</label>
+          <input type="text" placeholder="Your name" />
+        </div>
+        <div class="form-row">
+          <label>Email</label>
+          <input type="email" placeholder="you@example.com" />
+        </div>
+        <div class="form-row">
+          <label>Phone</label>
+          <input type="tel" placeholder="Optional" />
+        </div>
+        <div class="form-row">
+          <label>Project details</label>
+          <textarea rows="4" placeholder="Brief description of the work you need doing"></textarea>
+        </div>
+        <button type="button" class="btn" style="width:100%;">Send (example only)</button>
+        <p class="form-note">This is a demo form. When you’re ready, we can connect this to your email.</p>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container footer-inner">
+      <span>&copy; <span id="year"></span> RSA Brick &amp; Construction</span>
+      <span>Professional brickwork &amp; construction services</span>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    (function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v18.0";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+  </script>
+</body>
+</html>
+
