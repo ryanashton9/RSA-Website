@@ -258,9 +258,11 @@
         </ul>
       </div>
       <form class="contact-form"
-            action="mailto:rsabrickworkconstruction@gmail.com"
-            method="post"
-            enctype="text/plain">
+            action="https://formsubmit.co/rsabrickworkconstruction@gmail.com"
+            method="POST">
+        <input type="hidden" name="_subject" value="New enquiry from RSA website" />
+        <input type="text" name="_honey" style="display:none" />
+        <input type="hidden" name="_captcha" value="false" />
         <div class="form-row">
           <label>Name</label>
           <input type="text" name="name" placeholder="Your name" required />
@@ -278,7 +280,7 @@
           <textarea name="message" rows="4" placeholder="Brief description of the work you need doing" required></textarea>
         </div>
         <button type="submit" class="btn" style="width:100%;">Send enquiry</button>
-        <p class="form-note">Clicking send will open your email app to send the enquiry directly to us.</p>
+        <p class="form-note">Your enquiry will be sent securely to rsabrickworkconstruction@gmail.com.</p>
       </form>
     </div>
   </section>
