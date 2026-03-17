@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RSA Brickwork | Job Pricing &amp; Invoice</title>
+  <style>
+    :root{
+      --accent:#c44536;
+      --accent-soft:#fbe0da;
+      --accent-deep:#8d2b21;
+      --ink:#222222;
+      --muted:#757575;
+      --border-soft:rgba(15,23,42,0.06);
+      --card-bg:#ffffff;
+      --shell-bg:#f3f4f7;
+      --radius-lg:22px;
+      --radius-md:16px;
+      --shadow-soft:0 24px 60px rgba(15,23,42,0.10);
+      --transition-med:260ms cubic-bezier(.21,.8,.25,1);
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:
+        radial-gradient(circle at 0 0, rgba(238,242,255,0.8), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(252,231,224,0.9), transparent 55%),
+        linear-gradient(180deg,#f8fafc,#eef0f4);
+      color:var(--ink);
+      line-height:1.6;
+      -webkit-font-smoothing:antialiased;
+    }
+
+    .page-shell{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:2rem 1.5rem;
+    }
+
+    .invoice-shell{
+      background:#ffffff;
+      border-radius:var(--radius-lg);
+      padding:1.8rem 1.6rem 1.6rem;
+      box-shadow:var(--shadow-soft);
+      border:1px solid rgba(203,213,225,0.95);
+      max-width:980px;
+      width:100%;
+    }
+
+    .invoice-header{
+      display:flex;
+      justify-content:space-between;
+      gap:1.5rem;
+      flex-wrap:wrap;
+      margin-bottom:1.3rem;
+    }
+
+    .logo{
+      display:flex;
+      align-items:center;
+      gap:0.85rem;
+      font-weight:600;
+    }
+
+    .logo-image{
+      height:44px;
+      width:44px;
+      border-radius:18px;
+      background:conic-gradient(from 210deg,#fce1d7,#ffffff,#fef3f0,#fadde1);
+      padding:2px;
+      box-shadow:0 12px 32px rgba(15,23,42,0.18);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+    }
+
+    .logo-image-inner{
+      height:100%;
+      width:100%;
+      border-radius:16px;
+      background:radial-gradient(circle at 10% 0%,#ffffff, #f3f4f6);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:1.1rem;
+      color:var(--accent-deep);
+      letter-spacing:0.08em;
+    }
+
+    .logo-text{
+      display:flex;
+      flex-direction:column;
+      gap:0.14rem;
+    }
+
+    .logo-title{
+      font-size:0.98rem;
+      letter-spacing:0.18em;
+      text-transform:uppercase;
+    }
+
+    .logo-tagline{
+      font-size:0.8rem;
+      letter-spacing:0.14em;
+      text-transform:uppercase;
+      color:var(--accent-deep);
+    }
+
+    .invoice-biz-details{
+      font-size:0.85rem;
+      color:var(--muted);
+      text-align:right;
+    }
+
+    .invoice-grid{
+      display:grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap:1.2rem;
+      margin-bottom:1.2rem;
+      font-size:0.9rem;
+    }
+
+    .invoice-label{
+      display:block;
+      font-size:0.78rem;
+      text-transform:uppercase;
+      letter-spacing:0.14em;
+      color:var(--muted);
+      margin-bottom:0.2rem;
+    }
+
+    .invoice-input,
+    .invoice-textarea{
+      width:100%;
+      padding:0.5rem 0.6rem;
+      border-radius:10px;
+      border:1px solid rgba(203,213,225,0.95);
+      font-family:inherit;
+      font-size:0.9rem;
+      color:var(--ink);
+      background:#f9fafb;
+      outline:none;
+      transition:border-color 160ms ease-out, box-shadow 160ms ease-out, background 160ms ease-out;
+    }
+
+    .invoice-input:focus,
+    .invoice-textarea:focus{
+      border-color:var(--accent);
+      box-shadow:0 0 0 1px rgba(250,112,90,0.55);
+      background:#ffffff;
+    }
+
+    .invoice-textarea{
+      resize:vertical;
+      min-height:80px;
+    }
+
+    .invoice-table{
+      width:100%;
+      border-collapse:collapse;
+      margin-bottom:0.8rem;
+      font-size:0.88rem;
+    }
+
+    .invoice-table th,
+    .invoice-table td{
+      border-bottom:1px solid rgba(226,232,240,0.9);
+      padding:0.4rem 0.4rem;
+      text-align:left;
+    }
+
+    .invoice-table th{
+      font-size:0.8rem;
+      text-transform:uppercase;
+      letter-spacing:0.12em;
+      color:var(--muted);
+      background:rgba(248,250,252,0.9);
+    }
+
+    .invoice-line-input{
+      width:100%;
+      padding:0.35rem 0.4rem;
+      border-radius:8px;
+      border:1px solid rgba(226,232,240,0.9);
+      font-family:inherit;
+      font-size:0.85rem;
+      background:#f9fafb;
+    }
+
+    .invoice-line-input[readonly]{
+      background:#f9fafb;
+    }
+
+    .invoice-summary{
+      display:flex;
+      justify-content:flex-end;
+      font-size:0.9rem;
+      margin-top:0.4rem;
+    }
+
+    .invoice-summary table{
+      border-collapse:collapse;
+      min-width:220px;
+    }
+
+    .invoice-summary th,
+    .invoice-summary td{
+      padding:0.3rem 0.2rem;
+      text-align:right;
+    }
+
+    .invoice-summary th{
+      font-weight:500;
+      color:var(--muted);
+    }
+
+    .invoice-summary .total{
+      font-size:1rem;
+      font-weight:600;
+      color:var(--accent-deep);
+    }
+
+    .invoice-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:0.6rem;
+      justify-content:space-between;
+      align-items:center;
+      margin-top:0.9rem;
+      font-size:0.8rem;
+      color:var(--muted);
+    }
+
+    .invoice-actions-buttons{
+      display:flex;
+      flex-wrap:wrap;
+      gap:0.5rem;
+    }
+
+    .btn-soft{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:0.45rem 1rem;
+      border-radius:999px;
+      border:1px solid rgba(203,213,225,0.95);
+      background:#f9fafb;
+      font-size:0.8rem;
+      color:var(--ink);
+      cursor:pointer;
+      transition:background 180ms ease-out, transform 180ms ease-out, box-shadow 180ms ease-out;
+    }
+
+    .btn-soft:hover{
+      background:#ffffff;
+      transform:translateY(-1px);
+      box-shadow:0 10px 26px rgba(148,163,184,0.35);
+    }
+
+    .btn-primary{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:0.5rem 1.3rem;
+      border-radius:999px;
+      border:1px solid rgba(148,27,11,0.22);
+      background:linear-gradient(135deg,var(--accent),#f97316);
+      color:#ffffff;
+      font-size:0.86rem;
+      font-weight:600;
+      cursor:pointer;
+      box-shadow:0 14px 36px rgba(148,27,11,0.4);
+      transition:transform var(--transition-med), box-shadow var(--transition-med), background var(--transition-med);
+    }
+
+    .btn-primary:hover{
+      transform:translateY(-2px) scale(1.01);
+      box-shadow:0 18px 52px rgba(148,27,11,0.5);
+      background:linear-gradient(135deg,var(--accent-deep),var(--accent));
+    }
+
+    .hint{
+      font-size:0.8rem;
+      color:var(--muted);
+      margin-bottom:0.6rem;
+    }
+
+    @media (max-width:720px){
+      .page-shell{
+        padding:2.1rem 0.9rem 1.4rem;
+      }
+      .invoice-shell{
+        border-radius:16px;
+        padding:1.6rem 1.1rem 1.3rem;
+      }
+      .invoice-grid{
+        grid-template-columns:1fr;
+      }
+      .invoice-header{
+        flex-direction:column;
+        align-items:flex-start;
+      }
+      .invoice-biz-details{
+        text-align:left;
+      }
+    }
+
+    @media print{
+      body{
+        background:#ffffff;
+      }
+      .page-shell{
+        padding:0;
+      }
+      .invoice-shell{
+        box-shadow:none;
+        border:none;
+        border-radius:0;
+        padding:0;
+      }
+      .invoice-actions{
+        display:none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <div class="invoice-shell">
+      <div class="invoice-header">
+        <div>
+          <div class="logo">
+            <div class="logo-image">
+              <div class="logo-image-inner">RSA</div>
+            </div>
+            <div class="logo-text">
+              <span class="logo-title">RSA BRICKWORK &amp; CONSTRUCTION</span>
+              <span class="logo-tagline">Invoice / Job Quote</span>
+            </div>
+          </div>
+          <p class="hint">Fill this in, then use “Print / Save PDF” at the bottom.</p>
+        </div>
+        <div class="invoice-biz-details">
+          <strong>RSA Brickwork &amp; Construction</strong><br />
+          Manchester &amp; surrounding areas<br />
+          Phone: 07539 782 655<br />
+          Email: rsabrickworkconstruction@gmail.com
+        </div>
+      </div>
+
+      <div class="invoice-grid">
+        <div>
+          <label class="invoice-label" for="invoice-client">Client</label>
+          <input id="invoice-client" class="invoice-input" placeholder="Client name" />
+          <label class="invoice-label" for="invoice-client-address" style="margin-top:0.5rem;">Client address</label>
+          <textarea id="invoice-client-address" class="invoice-textarea" placeholder="Address for invoice"></textarea>
+        </div>
+        <div>
+          <label class="invoice-label" for="invoice-job-ref">Job reference</label>
+          <input id="invoice-job-ref" class="invoice-input" placeholder="e.g. Rear extension brickwork" />
+          <label class="invoice-label" for="invoice-site-address" style="margin-top:0.5rem;">Site address</label>
+          <textarea id="invoice-site-address" class="invoice-textarea" placeholder="Where the work is carried out"></textarea>
+          <div style="display:flex;gap:0.6rem;margin-top:0.5rem;">
+            <div style="flex:1;">
+              <label class="invoice-label" for="invoice-date">Date</label>
+              <input id="invoice-date" type="date" class="invoice-input" />
+            </div>
+            <div style="flex:1;">
+              <label class="invoice-label" for="invoice-number">Invoice / Quote no.</label>
+              <input id="invoice-number" class="invoice-input" placeholder="Optional reference" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <table class="invoice-table" aria-label="Invoice line items">
+        <thead>
+          <tr>
+            <th style="width:50%;">Description</th>
+            <th style="width:12%;">Qty</th>
+            <th style="width:18%;">Rate</th>
+            <th style="width:20%;">Line total</th>
+          </tr>
+        </thead>
+        <tbody id="invoice-lines">
+        </tbody>
+      </table>
+
+      <div class="invoice-summary">
+        <table>
+          <tr>
+            <th class="total">Total</th>
+            <td id="invoice-total" class="total">£0.00</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="invoice-actions">
+        <div class="invoice-actions-buttons">
+          <button type="button" class="btn-soft" id="add-line-item">Add line</button>
+          <button type="button" class="btn-soft" id="clear-invoice">Clear</button>
+          <button type="button" class="btn-primary" id="print-invoice">Print / Save PDF</button>
+        </div>
+        <div>
+          All figures are estimates until confirmed. Check totals before sending to the client.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      var linesContainer = document.getElementById('invoice-lines');
+      var addLineBtn = document.getElementById('add-line-item');
+      var clearBtn = document.getElementById('clear-invoice');
+      var printBtn = document.getElementById('print-invoice');
+      var totalEl = document.getElementById('invoice-total');
+
+      if (!linesContainer) return;
+
+      function formatMoney(value) {
+        if (isNaN(value) || !isFinite(value)) return '£0.00';
+        return '£' + value.toFixed(2);
+      }
+
+      function recalc() {
+        var rows = linesContainer.querySelectorAll('tr');
+        var subtotal = 0;
+        rows.forEach(function(row) {
+          var qtyInput = row.querySelector('.invoice-qty');
+          var rateInput = row.querySelector('.invoice-rate');
+          var lineTotalInput = row.querySelector('.invoice-line-total');
+          var qty = parseFloat((qtyInput.value || '').replace(',', '.')) || 0;
+          var rate = parseFloat((rateInput.value || '').replace(',', '.')) || 0;
+          var lineTotal = qty * rate;
+          lineTotalInput.value = lineTotal ? formatMoney(lineTotal) : '';
+          subtotal += lineTotal;
+        });
+
+        totalEl.textContent = formatMoney(subtotal);
+      }
+
+      function addLine(description) {
+        var row = document.createElement('tr');
+        row.innerHTML =
+          '<td><input class="invoice-line-input invoice-desc" placeholder="Describe the work (e.g. brickwork for rear extension)" /></td>' +
+          '<td><input class="invoice-line-input invoice-qty" inputmode="decimal" placeholder="0" /></td>' +
+          '<td><input class="invoice-line-input invoice-rate" inputmode="decimal" placeholder="0.00" /></td>' +
+          '<td><input class="invoice-line-input invoice-line-total" readonly /></td>';
+        linesContainer.appendChild(row);
+
+        if (description) {
+          row.querySelector('.invoice-desc').value = description;
+        }
+
+        row.querySelectorAll('.invoice-qty, .invoice-rate').forEach(function(input) {
+          input.addEventListener('input', recalc);
+        });
+      }
+
+      addLineBtn.addEventListener('click', function() {
+        addLine();
+      });
+
+      clearBtn.addEventListener('click', function() {
+        if (confirm('Clear all invoice details?')) {
+          linesContainer.innerHTML = '';
+          addLine();
+          document.getElementById('invoice-client').value = '';
+          document.getElementById('invoice-client-address').value = '';
+          document.getElementById('invoice-job-ref').value = '';
+          document.getElementById('invoice-site-address').value = '';
+          document.getElementById('invoice-date').value = '';
+          document.getElementById('invoice-number').value = '';
+          recalc();
+        }
+      });
+
+      printBtn.addEventListener('click', function() {
+        window.print();
+      });
+
+      // start with a few helpful rows
+      addLine('Brickwork / construction labour');
+      addLine('Materials (bricks, blocks, cement, etc.)');
+      addLine('Waste removal / skips');
+      recalc();
+    })();
+  </script>
+</body>
+</html>
+
