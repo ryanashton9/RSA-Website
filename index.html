@@ -66,53 +66,19 @@
     .logo{
       display:flex;
       align-items:center;
-      gap:0.85rem;
       font-weight:600;
     }
 
-    .logo-image{
-      height:44px;
-      width:44px;
-      border-radius:18px;
-      background:conic-gradient(from 210deg,#fce1d7,#ffffff,#fef3f0,#fadde1);
-      padding:2px;
-      box-shadow:0 12px 32px rgba(15,23,42,0.18);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      overflow:hidden;
+    .logo a{
+      display:block;
+      line-height:0;
     }
 
-    .logo-image-inner{
-      height:100%;
-      width:100%;
-      border-radius:16px;
-      background:radial-gradient(circle at 10% 0%,#ffffff, #f3f4f6);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      font-size:1.1rem;
-      color:var(--accent-deep);
-      letter-spacing:0.08em;
-    }
-
-    .logo-text{
-      display:flex;
-      flex-direction:column;
-      gap:0.14rem;
-    }
-
-    .logo-title{
-      font-size:0.98rem;
-      letter-spacing:0.18em;
-      text-transform:uppercase;
-    }
-
-    .logo-tagline{
-      font-size:0.8rem;
-      letter-spacing:0.14em;
-      text-transform:uppercase;
-      color:var(--accent-deep);
+    .logo img{
+      height:52px;
+      width:auto;
+      display:block;
+      border-radius:8px;
     }
 
     nav{
@@ -716,13 +682,9 @@
   <header>
     <div class="container header-inner">
       <div class="logo">
-        <div class="logo-image">
-          <div class="logo-image-inner">RSA</div>
-        </div>
-        <div class="logo-text">
-          <span class="logo-title">RSA BRICKWORK &amp; CONSTRUCTION</span>
-          <span class="logo-tagline">Your project is our business</span>
-        </div>
+        <a href="index.html" aria-label="RSA Brickwork &amp; Construction home">
+          <img src="rsa-logo.png" alt="RSA Brickwork &amp; Construction" />
+        </a>
       </div>
       <nav>
         <a href="#about">About</a>
