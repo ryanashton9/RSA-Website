@@ -364,8 +364,8 @@
         <div>
           <label class="invoice-label" for="invoice-job-ref">Job reference</label>
           <input id="invoice-job-ref" class="invoice-input" placeholder="e.g. Rear extension brickwork" />
-          <label class="invoice-label" for="invoice-site-address" style="margin-top:0.5rem;">Site address</label>
-          <textarea id="invoice-site-address" class="invoice-textarea" placeholder="Where the work is carried out"></textarea>
+          <label class="invoice-label" for="invoice-job-description" style="margin-top:0.5rem;">Job description</label>
+          <textarea id="invoice-job-description" class="invoice-textarea" placeholder="What the price includes / scope of work"></textarea>
           <div style="display:flex;gap:0.6rem;margin-top:0.5rem;">
             <div style="flex:1;">
               <label class="invoice-label" for="invoice-date">Date</label>
@@ -475,7 +475,7 @@
           document.getElementById('invoice-client').value = '';
           document.getElementById('invoice-client-address').value = '';
           document.getElementById('invoice-job-ref').value = '';
-          document.getElementById('invoice-site-address').value = '';
+          document.getElementById('invoice-job-description').value = '';
           document.getElementById('invoice-date').value = '';
           document.getElementById('invoice-number').value = '';
           recalc();
